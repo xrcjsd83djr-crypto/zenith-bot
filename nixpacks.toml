@@ -1,9 +1,10 @@
 [phases.setup]
-nixPkgs = ["nodejs_22"]
+  nixPkgs = ["nodejs_22"]
 
-[phases.install]
-cmds = ["npm ci"]
-cacheDirectories = ["node_modules"]
+  [phases.install]
+  cmds = ["npm install"]
+  cacheDirectories = ["node_modules"]
 
-[phases.build]
-cmds = ["npm run build"]
+  [phases.build]
+  cmds = ["npm run build"]
+  
