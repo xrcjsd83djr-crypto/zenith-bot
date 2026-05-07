@@ -3,8 +3,7 @@
 
   [phases.install]
   cmds = ["npm install --include=dev"]
-  cacheDirectories = ["node_modules"]
 
   [phases.build]
-  cmds = ["npm run build"]
+  cmds = ["./node_modules/.bin/tsc -p tsconfig.json"]
   
