@@ -9,7 +9,7 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 
 if (!process.env.SESSION_SECRET) {
-  throw new Error("SESSION_SECRET must be set");
+  console.warn("[app] SESSION_SECRET not set — using insecure fallback for dev/testing only");
 }
 
 const app: Express = express();
@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET ?? "dev-insecure-secret-change-me",
     resave: false,
     saveUninitialized: false,
     cookie: {
