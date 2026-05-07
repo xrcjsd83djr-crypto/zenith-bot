@@ -39,8 +39,9 @@ export const divisionsTable = pgTable("divisions", {
   name: text("name").notNull(),
   description: text("description"),
   discordRoleId: text("discord_role_id"),
+  channelId: text("channel_id"),
   color: text("color").default("#5865F2"),
-  leaderId: text("leader_id"),
+  isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -49,15 +50,18 @@ export const staffTable = pgTable("staff", {
   guildId: text("guild_id").notNull().references(() => guildsTable.id, { onDelete: "cascade" }),
   discordId: text("discord_id").notNull(),
   discordUsername: text("discord_username").notNull(),
+  discordAvatarUrl: text("discord_avatar_url"),
+  robloxId: text("roblox_id"),
   robloxUsername: text("roblox_username"),
   callsign: text("callsign"),
   rankId: text("rank_id").references(() => ranksTable.id, { onDelete: "set null" }),
   divisionId: text("division_id").references(() => divisionsTable.id, { onDelete: "set null" }),
   isActive: boolean("is_active").notNull().default(true),
   strikeCount: integer("strike_count").notNull().default(0),
-  notes: text("notes"),
   joinedAt: timestamp("joined_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  hiredById: text("hired_by_id"),
+  notes: text("notes"),
 });
 
 export const applicationsTable = pgTable("applications", {
@@ -81,6 +85,7 @@ export const applicationQuestionsTable = pgTable("application_questions", {
   id: text("id").primaryKey(),
   guildId: text("guild_id").notNull().references(() => guildsTable.id, { onDelete: "cascade" }),
   question: text("question").notNull(),
+  placeholder: text("placeholder"),
   position: integer("position").notNull().default(0),
   isRequired: boolean("is_required").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -129,31 +134,4 @@ export const promotionsTable = pgTable("promotions", {
   promotedById: text("promoted_by_id").notNull(),
   promotedByUsername: text("promoted_by_username").notNull(),
   promotedAt: timestamp("promoted_at").notNull().defaultNow(),
-});
-
-export const meetingsTable = pgTable("meetings", {
-  id: text("id").primaryKey(),
-  guildId: text("guild_id").notNull().references(() => guildsTable.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  description: text("description"),
-  scheduledAt: timestamp("scheduled_at").notNull(),
-  duration: integer("duration").default(60),
-  hostId: text("host_id").notNull(),
-  hostUsername: text("host_username").notNull(),
-  attendeeIds: text("attendee_ids").array().notNull().default([]),
-  isCompleted: boolean("is_completed").notNull().default(false),
-  notes: text("notes"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
-export const activityLogsTable = pgTable("activity_logs", {
-  id: text("id").primaryKey(),
-  guildId: text("guild_id").notNull().references(() => guildsTable.id, { onDelete: "cascade" }),
-  staffId: text("staff_id").notNull().references(() => staffTable.id, { onDelete: "cascade" }),
-  action: text("action").notNull(),
-  details: text("details"),
-  messageCount: integer("message_count").default(0),
-  voiceMinutes: integer("voice_minutes").default(0),
-  weekStart: timestamp("week_start"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
