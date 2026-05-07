@@ -1,0 +1,7 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @workspace/dashboard run build"
+
+[deploy]
+startCommand = "npx serve -s artifacts/dashboard/dist -l $PORT"
+restartPolicyType = "ON_FAILURE"
