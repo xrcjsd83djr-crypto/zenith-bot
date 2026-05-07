@@ -2,7 +2,7 @@
   nixPkgs = ["nodejs_22"]
 
   [phases.install]
-  cmds = ["npm install"]
+  cmds = ["npm install --include=dev"]
   cacheDirectories = ["node_modules"]
 
   [phases.build]
