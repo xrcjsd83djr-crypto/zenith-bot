@@ -3,6 +3,8 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { existsSync } from "fs";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -57,5 +59,19 @@ app.use(
 );
 
 app.use("/api", router);
+
+// In production, serve the dashboard as a static SPA
+if (process.env.NODE_ENV === "production") {
+  const dashboardDist = path.resolve(__dirname, "../../artifacts/dashboard/dist/public");
+  if (existsSync(dashboardDist)) {
+    app.use(express.static(dashboardDist));
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(dashboardDist, "index.html"));
+    });
+    logger.info({ dashboardDist }, "Serving dashboard static files");
+  } else {
+    logger.warn({ dashboardDist }, "Dashboard dist not found — skipping static serving");
+  }
+}
 
 export default app;
