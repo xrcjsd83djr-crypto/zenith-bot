@@ -1,39 +1,69 @@
 import "dotenv/config";
-  import client from "./client.js";
-  import { commands } from "./commands/index.js";
-  import * as ready from "./events/ready.js";
-  import * as interactionCreate from "./events/interactionCreate.js";
+import {
+  Client,
+  Collection,
+  GatewayIntentBits,
+  Partials,
+} from "discord.js";
+import { config } from "./lib/config.js";
 
-  const token = process.env.DISCORD_TOKEN;
-  if (!token) {
-    console.error("[Zenith] DISCORD_TOKEN must be set");
-    process.exit(1);
+import * as strikeCommand from "./commands/strike.js";
+import * as staffCommand from "./commands/staff.js";
+import * as loaCommand from "./commands/loa.js";
+import * as rankCommand from "./commands/rank.js";
+import * as activityCommand from "./commands/activity.js";
+import * as configCommand from "./commands/config.js";
+import * as helpCommand from "./commands/help.js";
+
+import * as readyEvent from "./events/ready.js";
+import * as guildCreateEvent from "./events/guildCreate.js";
+import * as interactionCreateEvent from "./events/interactionCreate.js";
+import * as messageCreateEvent from "./events/messageCreate.js";
+
+interface BotClient extends Client {
+  commands: Collection<string, any>;
+}
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent,
+  ],
+  partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
+}) as BotClient;
+
+client.commands = new Collection();
+
+const commands = [
+  strikeCommand,
+  staffCommand,
+  loaCommand,
+  rankCommand,
+  activityCommand,
+  configCommand,
+  helpCommand,
+];
+
+for (const command of commands) {
+  client.commands.set(command.data.name, command);
+}
+
+const events = [
+  readyEvent,
+  guildCreateEvent,
+  interactionCreateEvent,
+  messageCreateEvent,
+];
+
+for (const event of events) {
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args as any));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args as any));
   }
+}
 
-  if (!process.env.DATABASE_URL) {
-    console.error("[Zenith] DATABASE_URL must be set");
-    process.exit(1);
-  }
-
-  // Keep the process alive on unhandled errors — log and continue
-  process.on("unhandledRejection", (reason) => {
-    console.error("[Zenith] Unhandled promise rejection:", reason);
-  });
-  process.on("uncaughtException", (err) => {
-    console.error("[Zenith] Uncaught exception:", err);
-  });
-
-  for (const cmd of commands) {
-    client.commands.set(cmd.data.name, cmd);
-  }
-
-  client.once(ready.name, (...args) => ready.execute(...(args as [typeof client])));
-  client.on(interactionCreate.name, (...args) => interactionCreate.execute(args[0] as any, client));
-
-  client.login(token).then(() => {
-    console.log("[Zenith] Bot is online.");
-  }).catch((err: unknown) => {
-    console.error("[Zenith] Failed to login:", err);
-    process.exit(1);
-  });
-  
+client.login(config.token);
