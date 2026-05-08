@@ -1,47 +1,47 @@
-import { EmbedBuilder } from "discord.js";
-import { db } from "../db/index.js";
-import { guildsTable } from "../db/schema.js";
-import { eq } from "drizzle-orm";
+import { EmbedBuilder, ColorResolvable } from "discord.js";
 
-export async function getGuildEmbed(guildId: string): Promise<{ color: `#${string}`; footer: string }> {
-  const guild = await db.select().from(guildsTable).where(eq(guildsTable.id, guildId)).limit(1);
-  return {
-    color: (guild[0]?.embedColor ?? "#5865F2") as `#${string}`,
-    footer: guild[0]?.embedFooter ?? "Zenith Staff Management",
-  };
-}
+const PRIMARY = 0x5BA4CF;
+const GOLD = 0xF5B800;
+const RED = 0xED4245;
+const GREEN = 0x57F287;
+const GRAY = 0x99AAB5;
 
-export function successEmbed(title: string, description: string, color: `#${string}` = "#57F287", footer = "Zenith Staff Management"): EmbedBuilder {
+export function successEmbed(title: string, description?: string) {
   return new EmbedBuilder()
-    .setColor(color)
-    .setTitle(`✅  ${title}`)
-    .setDescription(description)
-    .setFooter({ text: footer })
+    .setColor(GREEN as ColorResolvable)
+    .setTitle(`✅ ${title}`)
+    .setDescription(description ?? null)
     .setTimestamp();
 }
 
-export function errorEmbed(description: string): EmbedBuilder {
+export function errorEmbed(title: string, description?: string) {
   return new EmbedBuilder()
-    .setColor("#ED4245")
-    .setTitle("❌  Error")
-    .setDescription(description)
+    .setColor(RED as ColorResolvable)
+    .setTitle(`❌ ${title}`)
+    .setDescription(description ?? null)
     .setTimestamp();
 }
 
-export function infoEmbed(title: string, description: string, color: `#${string}` = "#5865F2", footer = "Zenith Staff Management"): EmbedBuilder {
+export function infoEmbed(title: string, description?: string) {
   return new EmbedBuilder()
-    .setColor(color)
-    .setTitle(`ℹ️  ${title}`)
-    .setDescription(description)
-    .setFooter({ text: footer })
+    .setColor(PRIMARY as ColorResolvable)
+    .setTitle(title)
+    .setDescription(description ?? null)
     .setTimestamp();
 }
 
-export function warnEmbed(title: string, description: string, footer = "Zenith Staff Management"): EmbedBuilder {
+export function premiumEmbed(title: string, description?: string) {
   return new EmbedBuilder()
-    .setColor("#FEE75C")
-    .setTitle(`⚠️  ${title}`)
-    .setDescription(description)
-    .setFooter({ text: footer })
+    .setColor(GOLD as ColorResolvable)
+    .setTitle(`⭐ ${title}`)
+    .setDescription(description ?? null)
+    .setTimestamp();
+}
+
+export function warnEmbed(title: string, description?: string) {
+  return new EmbedBuilder()
+    .setColor(0xFEE75C as ColorResolvable)
+    .setTitle(`⚠️ ${title}`)
+    .setDescription(description ?? null)
     .setTimestamp();
 }
