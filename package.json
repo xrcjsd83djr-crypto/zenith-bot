@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.mjs",
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.mjs --format=esm --sourcemap --external:pg-native",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.mjs --format=esm --sourcemap --packages=external",
     "deploy-commands": "tsx src/deploy-commands.ts"
   },
   "dependencies": {
