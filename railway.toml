@@ -1,6 +1,7 @@
 [build]
-builder = "nixpacks"
+  builder = "nixpacks"
 
-[deploy]
-startCommand = "node --enable-source-maps dist/index.js"
-restartPolicyType = "ON_FAILURE"
+  [deploy]
+  startCommand = "node --enable-source-maps dist/index.mjs"
+  restartPolicyType = "ON_FAILURE"
+  
