@@ -1,9 +1,11 @@
 [phases.setup]
-  nixPkgs = ["nodejs_22"]
+nixPkgs = ["nodejs_22"]
 
-  [phases.install]
-  cmds = ["npm install --include=dev"]
+[phases.install]
+cmds = ["npm install"]
 
-  [phases.build]
-  cmds = ["./node_modules/.bin/tsc -p tsconfig.json"]
-  
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm start"
