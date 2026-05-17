@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-export const config = {
+export let config = {
   token: process.env.DISCORD_BOT_TOKEN ?? "",
   clientId: process.env.DISCORD_CLIENT_ID ?? "",
   apiUrl: process.env.API_URL ?? "http://localhost:8080/api",
