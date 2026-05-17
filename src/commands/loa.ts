@@ -19,12 +19,10 @@ export const data = new SlashCommandBuilder()
   .addSubcommand(sub =>
     sub.setName("list")
       .setDescription("View all LOA requests")
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
   )
   .addSubcommand(sub =>
     sub.setName("approve")
       .setDescription("Approve an LOA request")
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
       .addIntegerOption(o => o.setName("id").setDescription("The LOA request ID").setRequired(true))
   );
 
