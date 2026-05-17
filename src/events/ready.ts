@@ -14,7 +14,7 @@ export async function execute(client: Client<true>) {
       await client.application?.commands.set(commands);
     // Also register per-guild for immediate updates
     for (const guild of client.guilds.cache.values()) {
-      await guild.commands.set(commands).catch(e => console.error(, e));
+      await guild.commands.set(commands).catch(e => console.error(`Failed to register for guild ${guild.id}:`, e));
     }
 
       console.log(`[Zenith] Registered ${commands.length} slash command(s)`);
