@@ -1,10 +1,5 @@
 import "dotenv/config";
-import {
-  Client,
-  Collection,
-  GatewayIntentBits,
-  Partials,
-} from "discord.js";
+import { Client, Collection, GatewayIntentBits, Partials } from "discord.js";
 import { config } from "./lib/config.js";
 
 import * as strikeCommand from "./commands/strike.js";
@@ -13,6 +8,8 @@ import * as loaCommand from "./commands/loa.js";
 import * as rankCommand from "./commands/rank.js";
 import * as activityCommand from "./commands/activity.js";
 import * as configCommand from "./commands/config.js";
+import * as setupCommand from "./commands/admin/config.js";
+import * as givePremiumCommand from "./commands/admin/give-premium.js";
 import * as helpCommand from "./commands/help.js";
 import * as moderationCommand from "./commands/moderation.js";
 import * as performanceCommand from "./commands/performance.js";
@@ -44,31 +41,19 @@ const client = new Client({
 client.commands = new Collection();
 
 const commands = [
-  strikeCommand,
-  staffCommand,
-  loaCommand,
-  rankCommand,
-  activityCommand,
-  configCommand,
-  helpCommand,
-  moderationCommand,
-  performanceCommand,
-  scheduleCommand,
-  analyticsCommand,
-  trainingCommand,
+  strikeCommand, staffCommand, loaCommand, rankCommand,
+  activityCommand, configCommand, setupCommand, givePremiumCommand,
+  helpCommand, moderationCommand, performanceCommand,
+  scheduleCommand, analyticsCommand, trainingCommand,
 ];
 
 for (const command of commands) {
-  client.commands.set(command.data.name, command);
+  if (command.data && command.execute) {
+    client.commands.set(command.data.name, command);
+  }
 }
 
-const events = [
-  readyEvent,
-  guildCreateEvent,
-  interactionCreateEvent,
-  messageCreateEvent,
-];
-
+const events = [readyEvent, guildCreateEvent, interactionCreateEvent, messageCreateEvent];
 for (const event of events) {
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args as any));
