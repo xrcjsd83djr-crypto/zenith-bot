@@ -12,6 +12,11 @@ export async function execute(client: Client<true>) {
     const commands = client.commands?.map((cmd: any) => cmd.data.toJSON()) || [];
     if (commands.length > 0) {
       await client.application?.commands.set(commands);
+    // Also register per-guild for immediate updates
+    for (const guild of client.guilds.cache.values()) {
+      await guild.commands.set(commands).catch(e => console.error(, e));
+    }
+
       console.log(`[Zenith] Registered ${commands.length} slash command(s)`);
     }
   } catch (err) {
