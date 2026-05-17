@@ -4,126 +4,120 @@ import {
   PermissionFlagsBits,
 } from "discord.js";
 import { api } from "../lib/api.js";
-import { successEmbed, errorEmbed, infoEmbed, warnEmbed } from "../lib/embed.js";
+import { successEmbed, errorEmbed, infoEmbed } from "../lib/embed.js";
 
 export const data = new SlashCommandBuilder()
   .setName("loa")
-  .setDescription("Manage leave of absence requests")
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+  .setDescription("Manage Leave of Absence requests")
   .addSubcommand(sub =>
     sub.setName("request")
-      .setDescription("Submit an LOA request")
+      .setDescription("Submit a Leave of Absence request")
       .addStringOption(o => o.setName("reason").setDescription("Reason for LOA").setRequired(true))
       .addStringOption(o => o.setName("start").setDescription("Start date (YYYY-MM-DD)").setRequired(true))
       .addStringOption(o => o.setName("end").setDescription("End date (YYYY-MM-DD)").setRequired(true))
   )
   .addSubcommand(sub =>
     sub.setName("list")
-      .setDescription("List LOA requests")
-      .addStringOption(o => o.setName("status").setDescription("Filter by status").setRequired(false)
-        .addChoices(
-          { name: "Pending", value: "pending" },
-          { name: "Approved", value: "approved" },
-          { name: "Denied", value: "denied" },
-        ))
+      .setDescription("View all LOA requests")
+      .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
   )
   .addSubcommand(sub =>
     sub.setName("approve")
       .setDescription("Approve an LOA request")
+      .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
       .addIntegerOption(o => o.setName("id").setDescription("The LOA request ID").setRequired(true))
-  )
-  .addSubcommand(sub =>
-    sub.setName("deny")
-      .setDescription("Deny an LOA request")
-      .addIntegerOption(o => o.setName("id").setDescription("The LOA request ID").setRequired(true))
-  )
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+  );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
   const guildId = interaction.guildId!;
   const sub = interaction.options.getSubcommand();
 
-  await interaction.deferReply({ ephemeral: true });
+  // Make responses public
+  await interaction.deferReply({ ephemeral: false });
 
   if (sub === "request") {
     const reason = interaction.options.getString("reason", true);
     const start = interaction.options.getString("start", true);
     const end = interaction.options.getString("end", true);
 
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      await interaction.editReply({ embeds: [errorEmbed("Invalid Date", "Please use YYYY-MM-DD format (e.g. 2025-05-15)")] });
-      return;
-    }
-
-    if (endDate <= startDate) {
-      await interaction.editReply({ embeds: [errorEmbed("Invalid Date Range", "End date must be after start date.")] });
-      return;
-    }
-
-    const days = Math.ceil((endDate.getTime() - startDate.getTime()) / 86400000);
-
     try {
+      // Check if LOA channel is configured
+      const config = await api.config.get(guildId);
+      if (!config.loa_channel_id) {
+        return await interaction.editReply({
+          embeds: [errorEmbed(
+            "LOA Channel Not Configured",
+            "The server admin must configure a LOA channel in Server Settings before you can submit requests."
+          )]
+        });
+      }
+
       const loa = await api.loa.create(guildId, {
-        reason,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
         userId: interaction.user.id,
         username: interaction.user.username,
+        reason,
+        startDate: new Date(start),
+        endDate: new Date(end),
       });
 
-      const embed = successEmbed("LOA Request Submitted", "Your leave of absence request has been submitted for review.")
+      const embed = successEmbed("LOA Request Submitted", `Your leave of absence request has been submitted.`)
         .addFields(
-          { name: "Duration", value: `${days} day${days !== 1 ? "s" : ""}`, inline: true },
-          { name: "Dates", value: `${start} → ${end}`, inline: true },
-          { name: "Request ID", value: `#${loa.id}`, inline: true },
           { name: "Reason", value: reason, inline: false },
+          { name: "Start Date", value: start, inline: true },
+          { name: "End Date", value: end, inline: true },
+          { name: "Status", value: "⏳ Pending", inline: true },
+          { name: "Request ID", value: `#${loa.id}`, inline: true },
         );
 
       await interaction.editReply({ embeds: [embed] });
-    } catch {
-      await interaction.editReply({ embeds: [errorEmbed("Failed to submit LOA request")] });
+    } catch (err: any) {
+      console.error("LOA request error:", err);
+      await interaction.editReply({
+        embeds: [errorEmbed("Failed to Submit LOA Request", err.message || "Please try again.")]
+      });
     }
   }
 
   if (sub === "list") {
-    const statusFilter = interaction.options.getString("status");
     try {
-      let loas = await api.loa.list(guildId);
-      if (statusFilter) loas = loas.filter((l: any) => l.status === statusFilter);
+      const loaRequests = await api.loa.list(guildId);
+      const embed = infoEmbed("Leave of Absence Requests")
+        .setDescription(loaRequests.length === 0 ? "No LOA requests." : null);
 
-      if (loas.length === 0) {
-        await interaction.editReply({ embeds: [infoEmbed("LOA Requests", "No requests found.")] });
-        return;
+      if (loaRequests.length > 0) {
+        const lines = loaRequests.slice(0, 15).map((l: any) =>
+          `**#${l.id}** · <@${l.user_id}> — ${l.reason.slice(0, 40)} *(${l.status})*`
+        );
+        embed.setDescription(lines.join("\n"));
+        embed.setFooter({ text: `${loaRequests.length} total request${loaRequests.length !== 1 ? "s" : ""}` });
       }
 
-      const lines = loas.slice(0, 15).map((l: any) => {
-        const statusEmoji = l.status === "approved" ? "✅" : l.status === "denied" ? "❌" : "⏳";
-        return `${statusEmoji} **#${l.id}** · <@${l.userId}> · ${new Date(l.startDate).toLocaleDateString()} → ${new Date(l.endDate).toLocaleDateString()}`;
-      });
-
-      const embed = infoEmbed(`LOA Requests${statusFilter ? ` — ${statusFilter}` : ""}`)
-        .setDescription(lines.join("\n"))
-        .setFooter({ text: `${loas.length} request${loas.length !== 1 ? "s" : ""}` });
-
       await interaction.editReply({ embeds: [embed] });
-    } catch {
-      await interaction.editReply({ embeds: [errorEmbed("Failed to fetch LOA requests")] });
+    } catch (err) {
+      console.error("LOA list error:", err);
+      await interaction.editReply({
+        embeds: [errorEmbed("Failed to fetch LOA requests")]
+      });
     }
   }
 
-  if (sub === "approve" || sub === "deny") {
+  if (sub === "approve") {
     const id = interaction.options.getInteger("id", true);
-    const status = sub === "approve" ? "approved" : "denied";
 
     try {
-      await api.loa.update(guildId, id, { status });
-      const verb = sub === "approve" ? "Approved" : "Denied";
-      await interaction.editReply({ embeds: [successEmbed(`LOA ${verb}`, `LOA request **#${id}** has been ${status}.`)] });
-    } catch {
-      await interaction.editReply({ embeds: [errorEmbed(`Failed to ${sub} LOA request`)] });
+      await api.loa.update(guildId, id, {
+        status: "approved",
+        approvedBy: interaction.user.id,
+      });
+
+      await interaction.editReply({
+        embeds: [successEmbed("LOA Approved", `LOA request **#${id}** has been approved.`)]
+      });
+    } catch (err) {
+      console.error("LOA approve error:", err);
+      await interaction.editReply({
+        embeds: [errorEmbed("Failed to approve LOA request")]
+      });
     }
   }
 }

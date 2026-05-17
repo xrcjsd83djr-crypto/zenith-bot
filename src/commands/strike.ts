@@ -31,8 +31,9 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   const guildId = interaction.guildId!;
   const sub = interaction.options.getSubcommand();
-
-  await interaction.deferReply({ ephemeral: true });
+  
+  // Don't use ephemeral - make responses public
+  await interaction.deferReply({ ephemeral: false });
 
   if (sub === "issue") {
     const user = interaction.options.getUser("user", true);
@@ -42,17 +43,17 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     try {
       const strike = await api.strikes.create(guildId, {
         userId: user.id,
+        username: user.username,
         reason,
         evidence,
         issuedBy: interaction.user.id,
         issuedByName: interaction.user.username,
-        username: user.username,
       });
 
       const strikes = await api.strikes.list(guildId);
-      const userStrikes = strikes.filter((s: any) => s.userId === user.id && s.active);
+      const userStrikes = strikes.filter((s: any) => s.user_id === user.id && s.active);
 
-      const embed = successEmbed("Strike Issued", `${user} has received a strike.`)
+      const embed = successEmbed("⚠️ Strike Issued", `${user} has received a strike.`)
         .addFields(
           { name: "Reason", value: reason, inline: false },
           { name: "Evidence", value: evidence || "None provided", inline: false },
@@ -62,16 +63,20 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         .setFooter({ text: `Issued by ${interaction.user.username}` });
 
       await interaction.editReply({ embeds: [embed] });
-    } catch {
-      await interaction.editReply({ embeds: [errorEmbed("Failed to Issue Strike", "Please try again or use the dashboard.")] });
+    } catch (err) {
+      console.error("Strike error:", err);
+      await interaction.editReply({ 
+        embeds: [errorEmbed("Failed to Issue Strike", "Please try again or use the dashboard.")] 
+      });
     }
   }
 
   if (sub === "list") {
     const filterUser = interaction.options.getUser("user");
+
     try {
       let strikes = await api.strikes.list(guildId);
-      if (filterUser) strikes = strikes.filter((s: any) => s.userId === filterUser.id);
+      if (filterUser) strikes = strikes.filter((s: any) => s.user_id === filterUser.id);
       const active = strikes.filter((s: any) => s.active);
 
       const embed = infoEmbed(`Strikes${filterUser ? ` — ${filterUser.username}` : ""}`)
@@ -79,25 +84,34 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
       if (active.length > 0) {
         const lines = active.slice(0, 15).map((s: any) =>
-          `**#${s.id}** · <@${s.userId}> — ${s.reason.slice(0, 60)} *(by ${s.issuedByName})*`
+          `**#${s.id}** · <@${s.user_id}> — ${s.reason.slice(0, 60)} *(by ${s.issued_by_name})*`
         );
         embed.setDescription(lines.join("\n"));
         embed.setFooter({ text: `${active.length} active strike${active.length !== 1 ? "s" : ""}` });
       }
 
       await interaction.editReply({ embeds: [embed] });
-    } catch {
-      await interaction.editReply({ embeds: [errorEmbed("Failed to fetch strikes")] });
+    } catch (err) {
+      console.error("Strike list error:", err);
+      await interaction.editReply({ 
+        embeds: [errorEmbed("Failed to fetch strikes")] 
+      });
     }
   }
 
   if (sub === "revoke") {
     const id = interaction.options.getInteger("id", true);
+
     try {
       await api.strikes.remove(guildId, id);
-      await interaction.editReply({ embeds: [successEmbed("Strike Revoked", `Strike **#${id}** has been revoked.`)] });
-    } catch {
-      await interaction.editReply({ embeds: [errorEmbed("Failed to revoke strike", "Strike may not exist or already be revoked.")] });
+      await interaction.editReply({ 
+        embeds: [successEmbed("Strike Revoked", `Strike **#${id}** has been revoked.`)] 
+      });
+    } catch (err) {
+      console.error("Strike revoke error:", err);
+      await interaction.editReply({ 
+        embeds: [errorEmbed("Failed to revoke strike", "Strike may not exist or already be revoked.")] 
+      });
     }
   }
 }
