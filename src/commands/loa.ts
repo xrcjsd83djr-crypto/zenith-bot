@@ -9,6 +9,7 @@ import { successEmbed, errorEmbed, infoEmbed, warnEmbed } from "../lib/embed.js"
 export const data = new SlashCommandBuilder()
   .setName("loa")
   .setDescription("Manage leave of absence requests")
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
   .addSubcommand(sub =>
     sub.setName("request")
       .setDescription("Submit an LOA request")
@@ -29,15 +30,14 @@ export const data = new SlashCommandBuilder()
   .addSubcommand(sub =>
     sub.setName("approve")
       .setDescription("Approve an LOA request")
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
       .addIntegerOption(o => o.setName("id").setDescription("The LOA request ID").setRequired(true))
   )
   .addSubcommand(sub =>
     sub.setName("deny")
       .setDescription("Deny an LOA request")
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
       .addIntegerOption(o => o.setName("id").setDescription("The LOA request ID").setRequired(true))
-  );
+  )
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
   const guildId = interaction.guildId!;
