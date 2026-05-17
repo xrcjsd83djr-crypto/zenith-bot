@@ -1,19 +1,35 @@
 import { config } from "./config.js";
 
-export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${config.apiUrl}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      "X-Bot-Secret": process.env.BOT_SECRET ?? "",
-      ...(options.headers ?? {}),
-    },
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`API error ${res.status}: ${text}`);
+export async function apiRequest<T>(path: string, options: RequestInit = {}, retries = 3): Promise<T> {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      
+      const res = await fetch(`${config.apiUrl}${path}`, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          "X-Bot-Secret": process.env.BOT_SECRET ?? "",
+          ...(options.headers ?? {}),
+        },
+      });
+      
+      clearTimeout(timeout);
+      
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`API error ${res.status}: ${text}`);
+      }
+      return res.json() as Promise<T>;
+    } catch (err: any) {
+      if (attempt === retries - 1) throw err;
+      console.warn(`[API] Retry ${attempt + 1}/${retries} for ${path}:`, err.message);
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+    }
   }
-  return res.json() as Promise<T>;
+  throw new Error(`API request failed after ${retries} attempts`);
 }
 
 export const api = {
