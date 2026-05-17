@@ -14,11 +14,17 @@ import * as rankCommand from "./commands/rank.js";
 import * as activityCommand from "./commands/activity.js";
 import * as configCommand from "./commands/config.js";
 import * as helpCommand from "./commands/help.js";
+import * as moderationCommand from "./commands/moderation.js";
+import * as performanceCommand from "./commands/performance.js";
+import * as scheduleCommand from "./commands/schedule.js";
+import * as analyticsCommand from "./commands/analytics.js";
+import * as trainingCommand from "./commands/training.js";
 
 import * as readyEvent from "./events/ready.js";
 import * as guildCreateEvent from "./events/guildCreate.js";
 import * as interactionCreateEvent from "./events/interactionCreate.js";
 import * as messageCreateEvent from "./events/messageCreate.js";
+import * as errorHandler from "./events/errorHandler.js";
 
 interface BotClient extends Client {
   commands: Collection<string, any>;
@@ -45,6 +51,11 @@ const commands = [
   activityCommand,
   configCommand,
   helpCommand,
+  moderationCommand,
+  performanceCommand,
+  scheduleCommand,
+  analyticsCommand,
+  trainingCommand,
 ];
 
 for (const command of commands) {
@@ -66,4 +77,5 @@ for (const event of events) {
   }
 }
 
+errorHandler.setupErrorHandlers(client);
 client.login(config.token);
