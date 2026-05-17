@@ -7,27 +7,38 @@ export async function execute(client: Client<true>) {
   console.log(`[Zenith] Logged in as ${client.user.tag}`);
   console.log(`[Zenith] Serving ${client.guilds.cache.size} guild(s)`);
 
-  // Register slash commands globally
+  // Register slash commands
   try {
-    const commands = client.commands?.map((cmd: any) => cmd.data.toJSON()) || [];
+    const commands = (client as any).commands?.map((cmd: any) => cmd.data.toJSON()) || [];
     if (commands.length > 0) {
       await client.application?.commands.set(commands);
-    // Also register per-guild for immediate updates
-    for (const guild of client.guilds.cache.values()) {
-      await guild.commands.set(commands).catch(e => console.error(`Failed to register for guild ${guild.id}:`, e));
-    }
-
+      // Also register per-guild for immediate availability
+      for (const guild of client.guilds.cache.values()) {
+        try {
+          await guild.commands.set(commands);
+        } catch (e) {
+          console.error(`[Zenith] Failed to register commands for guild ${guild.name}:`, e);
+        }
+      }
       console.log(`[Zenith] Registered ${commands.length} slash command(s)`);
     }
   } catch (err) {
     console.error("[Zenith] Failed to register commands:", err);
   }
 
+  // Register guild data in API (non-blocking)
+  const apiUrl = process.env.API_URL ?? "http://localhost:8080/api";
+  const botSecret = process.env.BOT_SECRET ?? "";
+  for (const guild of client.guilds.cache.values()) {
+    fetch(`${apiUrl}/guilds/${guild.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "X-Bot-Secret": botSecret },
+      body: JSON.stringify({ name: guild.name, icon: guild.icon }),
+    }).catch(() => {});
+  }
+
   client.user.setPresence({
-    activities: [{
-      name: "ERLC staff | /help",
-      type: ActivityType.Watching,
-    }],
+    activities: [{ name: "ERLC Staff | /help", type: ActivityType.Watching }],
     status: "online",
   });
 }
