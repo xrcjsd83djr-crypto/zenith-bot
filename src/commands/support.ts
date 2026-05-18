@@ -93,7 +93,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits, 
         const res = await api.post("/admin/announce", { message, sentBy: interaction.user.tag ?? interaction.user.username });
         if (!res.ok) throw new Error(await res.text());
         const d = await res.json() as any;
-        await interaction.editReply({ embeds: [successEmbed("Announcement Sent", `Queued for **${d.targetCount ?? "all"} servers**.`)] });
+        await interaction.editReply({ embeds: [successEmbed("Announcement Sent", `Queued for **${d.targetCount ?? "all"}** servers.`)] });
       }
     } catch (err: any) {
       await interaction.editReply({ embeds: [errorEmbed("Error", err.message ?? "An unexpected error occurred.")] });
