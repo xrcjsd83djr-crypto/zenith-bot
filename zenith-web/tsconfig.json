@@ -1,0 +1,23 @@
+{
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "lib": ["esnext", "dom", "dom.iterable"],
+      "strict": true,
+      "noEmit": true,
+      "jsx": "preserve",
+      "resolveJsonModule": true,
+      "allowImportingTsExtensions": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "types": ["node", "vite/client"],
+      "paths": {
+        "@/*": ["./src/*"]
+      }
+    }
+  }
+  

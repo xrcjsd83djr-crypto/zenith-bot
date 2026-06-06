@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="/zenith-theme.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium — Zenith</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1a2030;
+      --border: #30363d;
+      --primary: #d4af37;
+      --primary-hover: #ffd700;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    nav {
+      border-bottom: 2px solid #d4af37;
+      background: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .premium-header h1 {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+    .premium-header p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-top: 60px;
+    }
+    .plan-card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 32px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .plan-card.popular {
+      border-color: #d4af37;
+      transform: scale(1.05);
+      box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+    }
+    .popular-badge {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      color: white;
+      padding: 6px 20px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .plan-name {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .plan-price {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 32px;
+    }
+    .plan-price span {
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .plan-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 40px;
+    }
+    .plan-features li {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+    }
+    .plan-features i {
+      color: #27ae60;
+    }
+    .btn-premium {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      color: white;
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    }
+    .btn-outline {
+      border: 2px solid #d4af37;
+      color: #d4af37;
+    }
+    .btn-outline:hover {
+      background: #d4af37;
+      color: white;
+    }
+  </style>
+  <link rel="stylesheet" href="/zenith-theme.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">Z</div>
+        Zenith
+      </a>
+      <button onclick="goBack()" style="background: none; border: none; font-size: 14px; font-weight: 600; text-decoration: none; color: var(--muted); cursor: pointer;"><i class="fas fa-arrow-left"></i> Back</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="premium-header">
+      <h1>Elevate Your Server</h1>
+      <p>Unlock advanced management tools, priority support, and exclusive features to grow your community.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <div class="plan-name">Tier 1</div>
+        <div class="plan-price">500 <span>Robux / mo</span></div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> 1 Server Access</li>
+          <li><i class="fas fa-check"></i> Custom Embeds</li>
+          <li><i class="fas fa-check"></i> 7-Day Scheduling</li>
+          <li><i class="fas fa-check"></i> Priority Support</li>
+        </ul>
+        <a href="#" class="btn-premium btn-outline">Get Tier 1</a>
+      </div>
+
+      <div class="plan-card popular">
+        <div class="popular-badge">Most Popular</div>
+        <div class="plan-name">Tier 2</div>
+        <div class="plan-price">800 <span>Robux / mo</span></div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> 2 Servers Access</li>
+          <li><i class="fas fa-check"></i> All Tier 1 Features</li>
+          <li><i class="fas fa-check"></i> Custom Bot Status</li>
+          <li><i class="fas fa-check"></i> Advanced Logs</li>
+        </ul>
+        <a href="#" class="btn-premium btn-gold">Get Tier 2</a>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-name">Tier 3</div>
+        <div class="plan-price">1000 <span>Robux / mo</span></div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> 3 Servers Access</li>
+          <li><i class="fas fa-check"></i> All Tier 2 Features</li>
+          <li><i class="fas fa-check"></i> White-label Bot</li>
+          <li><i class="fas fa-check"></i> 24/7 Dedicated Support</li>
+        </ul>
+        <a href="#" class="btn-premium btn-outline">Get Tier 3</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      const stored = localStorage.getItem('lastServerId');
+      if (stored) {
+        window.location.href = `/dashboard?id=${stored}`;
+      } else {
+        window.location.href = '/select-server';
+      }
+    }
+
+    if (window.location.search.includes('id=')) {
+      const id = new URLSearchParams(window.location.search).get('id');
+      localStorage.setItem('lastServerId', id);
+    }
+  </script>
+</body>
+</html>

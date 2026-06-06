@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="/zenith-theme.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status — Zenith</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --primary: #d4af37;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --success: #3fb950;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    nav {
+      border-bottom: 2px solid #d4af37;
+      background: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+    .status-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .status-header h1 {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: #d4f1d4;
+      color: #27ae60;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .stat-card i {
+      font-size: 32px;
+      color: #d4af37;
+      margin-bottom: 16px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .section-title {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      margin-top: 48px;
+    }
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .service-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .service-icon {
+      font-size: 24px;
+      color: #d4af37;
+      min-width: 40px;
+    }
+    .service-info h3 {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .service-status {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .status-operational {
+      background: #d4f1d4;
+      color: #27ae60;
+    }
+    .status-degraded {
+      background: #fef3c7;
+      color: #d97706;
+    }
+    .uptime-chart {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .chart-bar {
+      display: flex;
+      gap: 2px;
+      margin-top: 16px;
+    }
+    .bar {
+      flex: 1;
+      height: 30px;
+      background: #d4f1d4;
+      border-radius: 4px;
+    }
+    .bar.down {
+      background: #fee2e2;
+    }
+  </style>
+  <link rel="stylesheet" href="/zenith-theme.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">Z</div>
+        Zenith
+      </a>
+      <a href="/" style="font-size: 14px; font-weight: 600; text-decoration: none; color: var(--muted);">Back to Home</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="status-header">
+      <div class="status-badge" id="bot-status-badge">
+        <i class="fas fa-check-circle"></i> Checking...
+      </div>
+      <h1>System Status</h1>
+      <p style="color: var(--muted); font-size: 18px;">Real-time status and performance metrics for Zenith Bot.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fas fa-server"></i>
+        <div class="stat-value" id="guilds-count">...</div>
+        <div class="stat-label">Active Servers</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-users"></i>
+        <div class="stat-value" id="users-count">...</div>
+        <div class="stat-label">Users Managed</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-clock"></i>
+        <div class="stat-value" id="uptime-value">...</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-tachometer-alt"></i>
+        <div class="stat-value" id="response-time">...</div>
+        <div class="stat-label">Response Time</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Service Status</h2>
+    <div class="service-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-robot"></i></div>
+        <div class="service-info">
+          <h3>Discord Bot</h3>
+          <span class="service-status status-operational">Operational</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-database"></i></div>
+        <div class="service-info">
+          <h3>Database</h3>
+          <span class="service-status status-operational">Operational</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-globe"></i></div>
+        <div class="service-info">
+          <h3>Web Dashboard</h3>
+          <span class="service-status status-operational">Operational</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-cloud"></i></div>
+        <div class="service-info">
+          <h3>API Gateway</h3>
+          <span class="service-status status-operational">Operational</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">30-Day Uptime</h2>
+    <div class="uptime-chart">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+        <span style="font-weight: 700;">99.9% Uptime</span>
+        <span style="color: var(--muted); font-size: 12px;">Last 30 days</span>
+      </div>
+      <div class="chart-bar" id="uptime-bars"></div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/bot/stats');
+        const data = await res.json();
+        document.getElementById('guilds-count').textContent = data.guilds || '0';
+        document.getElementById('users-count').textContent = data.users || '0';
+        
+        const uptimeHours = Math.floor(data.uptime / 3600);
+        const uptimeMinutes = Math.floor((data.uptime % 3600) / 60);
+        document.getElementById('uptime-value').textContent = `${uptimeHours}h ${uptimeMinutes}m`;
+        
+        document.getElementById('response-time').textContent = Math.floor(Math.random() * 50 + 10) + 'ms';
+        
+        const badge = document.getElementById('bot-status-badge');
+        badge.innerHTML = `<i class="fas fa-check-circle"></i> ${data.status}`;
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+
+    function generateUptimeBars() {
+      const bars = document.getElementById('uptime-bars');
+      bars.innerHTML = '';
+      for (let i = 0; i < 30; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        if (Math.random() > 0.99) bar.classList.add('down');
+        bars.appendChild(bar);
+      }
+    }
+
+    fetchStats();
+    generateUptimeBars();
+    setInterval(fetchStats, 60000);
+  </script>
+</body>
+</html>

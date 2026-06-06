@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="/zenith-theme.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Select Server — Zenith</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1a2030;
+      --border: #30363d;
+      --primary: #d4af37;
+      --primary-hover: #ffd700;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --success: #3fb950;
+      --accent: #2196f3;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* LOADER */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loader-bar {
+      width: 60px;
+      height: 4px;
+      background: var(--surface);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loader-bar::after {
+      content: '';
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+      animation: loading 1.5s infinite;
+    }
+    @keyframes loading {
+      0% { width: 0%; }
+      50% { width: 100%; }
+      100% { width: 0%; }
+    }
+
+    /* NAV */
+    nav {
+      border-bottom: 2px solid #d4af37;
+      background: var(--surface);
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: white;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn-ghost {
+      background: white;
+      color: var(--text);
+      border: 2px solid #d4af37;
+    }
+    .btn-ghost:hover {
+      background: #d4af37;
+      color: white;
+    }
+
+    /* MAIN */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .header {
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    /* GUILD GRID */
+    .guilds-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .guild-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .guild-card:hover {
+      border-color: #d4af37;
+      background: var(--surface2);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
+    }
+    .guild-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      margin: 0 auto 16px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      border: 1px solid var(--border);
+    }
+    .guild-icon img {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+    .guild-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+    .guild-role {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .guild-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      background: #d4f1d4;
+      color: #27ae60;
+    }
+    .guild-status.inactive {
+      background: #fadbd8;
+      color: #c0392b;
+    }
+    .guild-status i {
+      font-size: 12px;
+    }
+    .guild-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .guild-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .guild-btn-primary {
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      color: white;
+      font-weight: 600;
+    }
+    .guild-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+    .guild-btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .guild-btn-secondary:hover {
+      border-color: #d4af37;
+      background: var(--surface);
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+    }
+    .empty-icon {
+      font-size: 48px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .empty-state h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .guilds-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      }
+      .container {
+        padding: 24px 16px;
+      }
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/zenith-theme.css">
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-bar"></div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-icon">Z</div>
+      Zenith
+    </a>
+    <div class="nav-right">
+      <div class="user-info">
+        <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+        <span id="user-name">Loading...</span>
+      </div>
+      <button class="btn btn-ghost" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <h1>Select a Server</h1>
+    <p>Choose a server to manage with Zenith</p>
+  </div>
+
+  <div id="loading-state" class="empty-state">
+    <div class="empty-icon"><i class="fas fa-spinner fa-spin"></i></div>
+    <h2>Fetching Your Servers</h2>
+    <p id="loading-message">Hold tight, we're grabbing your servers...</p>
+  </div>
+
+  <div id="guilds-container" class="guilds-grid" style="display: none;"></div>
+
+  <div id="empty-state" class="empty-state" style="display: none;">
+    <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+    <h2>No Servers Found</h2>
+    <p>You don't manage any servers yet. Create or join a server to get started.</p>
+  </div>
+</div>
+
+<script>
+  // Hide loader after page loads
+  window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    setTimeout(() => {
+      loader.classList.add('hidden');
+    }, 300);
+  });
+
+  // Fetch user info
+  async function fetchUserInfo() {
+    try {
+      const res = await fetch('/api/auth/user');
+      if (!res.ok) {
+        window.location.href = '/';
+        return;
+      }
+      const user = await res.json();
+      document.getElementById('user-name').textContent = user.username;
+      document.getElementById('user-avatar').src = user.avatarUrl;
+    } catch (err) {
+      console.error('Failed to fetch user:', err);
+      window.location.href = '/';
+    }
+  }
+
+  // Fetch guilds with retry logic
+  async function fetchGuilds(retries = 3) {
+    try {
+      const res = await fetch('/api/auth/guilds?t=' + Date.now(), {
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      if (!res.ok) {
+        if (res.status === 401) {
+          window.location.href = '/';
+          return;
+        }
+        if (retries > 0) {
+          console.log('Retrying guilds fetch...');
+          setTimeout(() => fetchGuilds(retries - 1), 1000);
+          return;
+        }
+        console.error('Failed to fetch guilds:', res.statusText);
+        return;
+      }
+      const guilds = await res.json();
+      renderGuilds(guilds);
+    } catch (err) {
+      if (retries > 0) {
+        console.log('Retrying guilds fetch...');
+        setTimeout(() => fetchGuilds(retries - 1), 1000);
+        return;
+      }
+      console.error('Failed to fetch guilds:', err);
+    }
+  }
+
+  // Funny loading messages
+  const funnyMessages = [
+    'Hold tight, we are grabbing your servers...',
+    'Summoning your servers from the Discord realm...',
+    'Wrangling your servers like a digital cowboy...',
+    'Loading servers at light speed...',
+    'Your servers are on their way, we promise...',
+    'Consulting the Discord oracle...',
+    'Assembling your server squad...',
+    'Servers incoming in 3... 2... 1...',
+    'Brewing some server magic...',
+    'Servers are fashionably late, but worth the wait...'
+  ];
+
+  let messageIndex = 0;
+  setInterval(() => {
+    const msg = document.getElementById('loading-message');
+    if (msg) {
+      messageIndex = (messageIndex + 1) % funnyMessages.length;
+      msg.textContent = funnyMessages[messageIndex];
+    }
+  }, 3000);
+
+  // Render guilds
+  function renderGuilds(guilds) {
+    const container = document.getElementById('guilds-container');
+    const loadingState = document.getElementById('loading-state');
+    const emptyState = document.getElementById('empty-state');
+
+    loadingState.style.display = 'none';
+
+    if (!guilds || guilds.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    container.style.display = 'grid';
+    container.innerHTML = guilds.map(guild => `
+      <div class="guild-card">
+        <div class="guild-icon">
+          ${guild.iconUrl ? `<img src="${guild.iconUrl}" alt="${guild.name}">` : `<i class="fas fa-server"></i>`}
+        </div>
+        <div class="guild-name">${escapeHtml(guild.name)}</div>
+        <div class="guild-role">${guild.role}</div>
+        <div class="guild-status ${guild.botAdded ? '' : 'inactive'}">
+          <i class="fas ${guild.botAdded ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+          ${guild.botAdded ? 'Bot Added' : 'Bot Not Added'}
+        </div>
+        <div class="guild-actions">
+          <a href="/dashboard?id=${guild.id}" class="guild-btn guild-btn-primary">
+            <i class="fas fa-arrow-right"></i> Manage
+          </a>
+          ${guild.isStaff ? `
+            <a href="/staff-dashboard?id=${guild.id}" class="guild-btn guild-btn-secondary">
+              <i class="fas fa-briefcase"></i> Staff
+            </a>
+          ` : ''}
+          ${!guild.botAdded ? `
+            <a href="https://discord.com/oauth2/authorize?client_id=1234567890&scope=bot&permissions=8&guild_id=${guild.id}" class="guild-btn guild-btn-secondary">
+              <i class="fas fa-plus"></i> Add Bot
+            </a>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Logout
+  async function logout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  }
+
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Initialize
+  fetchUserInfo();
+  fetchGuilds();
+</script>
+
+</body>
+</html>
