@@ -1,0 +1,77 @@
+2026-06-06T04:18:38.364898262Z [inf]  scheduling build on Metal builder "production-builderv3-us-west1-7gnw"
+2026-06-06T04:18:39.179669320Z [inf]  unpacking archive
+2026-06-06T04:18:39.235926491Z [inf]  using build driver nixpacks-v1.41.0
+2026-06-06T04:18:39.255921573Z [inf]  uploading snapshot
+2026-06-06T04:18:39.294421937Z [inf]  
+2026-06-06T04:18:39.294425484Z [inf]  ╔═════ Nixpacks v1.41.0 ═════╗
+2026-06-06T04:18:39.294426274Z [inf]  ║ setup      │ nodejs_22     ║
+2026-06-06T04:18:39.294427323Z [inf]  ║────────────────────────────║
+2026-06-06T04:18:39.294427767Z [inf]  ║ install    │ npm install   ║
+2026-06-06T04:18:39.294429327Z [inf]  ║────────────────────────────║
+2026-06-06T04:18:39.294429796Z [inf]  ║ build      │ npm run build ║
+2026-06-06T04:18:39.294430336Z [inf]  ║────────────────────────────║
+2026-06-06T04:18:39.294430941Z [inf]  ║ start      │ npm start     ║
+2026-06-06T04:18:39.294431652Z [inf]  ╚════════════════════════════╝
+2026-06-06T04:18:39.294432323Z [inf]  
+2026-06-06T04:18:39.295614623Z [inf]  
+2026-06-06T04:18:39.295619236Z [inf]  Saved output to:
+2026-06-06T04:18:39.295620124Z [inf]    snapshot-target-unpack
+2026-06-06T04:18:39.344991480Z [inf]  [internal] load build definition from Dockerfile
+2026-06-06T04:18:39.345047431Z [inf]  [internal] load build definition from Dockerfile
+2026-06-06T04:18:39.346292670Z [inf]  [internal] load build definition from Dockerfile
+2026-06-06T04:18:39.397611380Z [inf]  [internal] load build definition from Dockerfile
+2026-06-06T04:18:39.411813785Z [inf]  [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
+2026-06-06T04:19:42.238818958Z [inf]  [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
+2026-06-06T04:19:42.239036736Z [inf]  [internal] load .dockerignore
+2026-06-06T04:19:42.239153089Z [inf]  [internal] load .dockerignore
+2026-06-06T04:19:42.239358735Z [inf]  [internal] load .dockerignore
+2026-06-06T04:19:42.475979985Z [inf]  [internal] load .dockerignore
+2026-06-06T04:19:42.534823791Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "BOT_SECRET") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-06-06T04:19:42.534824966Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "DISCORD_BOT_TOKEN") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-06-06T04:19:42.535224708Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "BOT_SECRET") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-06-06T04:19:42.535225408Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "DISCORD_BOT_TOKEN") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-06-06T04:19:42.535226178Z [wrn]  UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 18)(https://docs.docker.com/go/dockerfile/rule/undefined-var/)
+ details: Variables should be defined before their use
+
+2026-06-06T04:19:42.538075306Z [inf]  [stage-0 10/10] COPY . /app
+2026-06-06T04:19:42.538076175Z [inf]  [stage-0  9/10] RUN printf '\nPATH=/app/node_modules/.bin:$PATH' >> /root/.profile
+2026-06-06T04:19:42.538076929Z [inf]  [stage-0  8/10] RUN --mount=type=cache,id=s/66652961-9d90-4b1f-ae33-e1bef1c055b5-node_modules/cache,target=/app/node_modules/.cache npm run build
+2026-06-06T04:19:42.538077651Z [inf]  [stage-0  7/10] COPY . /app/.
+2026-06-06T04:19:42.538078158Z [inf]  [stage-0  6/10] RUN --mount=type=cache,id=s/66652961-9d90-4b1f-ae33-e1bef1c055b5-/root/npm,target=/root/.npm npm install
+2026-06-06T04:19:42.538078713Z [inf]  [stage-0  5/10] COPY . /app/.
+2026-06-06T04:19:42.538079426Z [inf]  [stage-0  4/10] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2026-06-06T04:19:42.538080013Z [inf]  [stage-0  3/10] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+2026-06-06T04:19:42.538080574Z [inf]  [internal] load build context
+2026-06-06T04:19:42.538081169Z [inf]  [stage-0  2/10] WORKDIR /app/
+2026-06-06T04:19:42.538081489Z [inf]  [stage-0  1/10] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+2026-06-06T04:19:42.650053832Z [inf]  [internal] load build context
+2026-06-06T04:19:42.650358503Z [inf]  [stage-0  1/10] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+2026-06-06T04:19:42.650359559Z [inf]  [internal] load build context
+2026-06-06T04:19:42.663233827Z [inf]  [stage-0  1/10] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+2026-06-06T04:19:42.869325566Z [inf]  [internal] load build context
+2026-06-06T04:19:43.047628609Z [inf]  [stage-0  2/10] WORKDIR /app/
+2026-06-06T04:19:43.047629605Z [inf]  [stage-0  3/10] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+2026-06-06T04:19:43.047630098Z [inf]  [stage-0  4/10] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2026-06-06T04:19:43.063647761Z [inf]  [stage-0  4/10] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2026-06-06T04:19:43.063929841Z [inf]  [stage-0  5/10] COPY . /app/.
+2026-06-06T04:19:45.372048770Z [inf]  [stage-0  5/10] COPY . /app/.
+2026-06-06T04:19:45.401780766Z [inf]  [stage-0  6/10] RUN --mount=type=cache,id=s/66652961-9d90-4b1f-ae33-e1bef1c055b5-/root/npm,target=/root/.npm npm install
+2026-06-06T04:19:46.559749293Z [inf]  npm warn config production Use `--omit=dev` instead.
+
+2026-06-06T04:20:57.627740516Z [inf]  npm error Exit handler never called!
+npm error This is an error with npm itself. Please report this error at:
+
+2026-06-06T04:20:57.627758592Z [inf]  npm error   <https://github.com/npm/cli/issues>
+
+2026-06-06T04:20:57.629745617Z [inf]  npm error A complete log of this run can be found in: /root/.npm/_logs/2026-06-06T04_19_46_518Z-debug-0.log
+
+2026-06-06T04:20:58.562494989Z [err]  [stage-0  6/10] RUN --mount=type=cache,id=s/66652961-9d90-4b1f-ae33-e1bef1c055b5-/root/npm,target=/root/.npm npm install
+2026-06-06T04:20:58.622793027Z [err]  Build Failed: build daemon returned an error < failed to solve: process "/bin/bash -ol pipefail -c npm install" did not complete successfully: exit code: 1 >
