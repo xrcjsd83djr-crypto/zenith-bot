@@ -1,23 +1,15 @@
 import "dotenv/config";
-  import { drizzle } from "drizzle-orm/node-postgres";
-  import { Pool } from "pg";
-  import * as schema from "./schema.js";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
+import * as schema from "./schema.js";
 
-  if (!process.env.DATABASE_URL) {
-    throw new Error("[Zenith] DATABASE_URL must be set");
-  }
+const url   = process.env.TURSO_DATABASE_URL;
+const authToken = process.env.TURSO_AUTH_TOKEN || "";
 
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-    max: 10,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000,
-  });
+if (!url) {
+  throw new Error("[Zenith] TURSO_DATABASE_URL must be set");
+}
 
-  pool.on("error", (err) => {
-    console.error("[Zenith] Unexpected DB pool error:", err);
-  });
+const client = createClient({ url, authToken });
 
-  export const db = drizzle(pool, { schema });
-  
+export const db = drizzle(client, { schema });
