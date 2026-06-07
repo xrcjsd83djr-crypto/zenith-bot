@@ -4,6 +4,31 @@ import { config } from '../lib/config.js';
 export const name = Events.ClientReady;
 export const once = true;
 
+/** Fetch custom status from API and apply to bot presence */
+async function applyCustomStatus(client: Client<true>): Promise<void> {
+  try {
+    const res = await fetch(`${config.apiUrl}/api/bot/global-status`, {
+      headers: { 'x-bot-secret': config.botSecret },
+    });
+    if (res.ok) {
+      const data: any = await res.json();
+      if (data.status && data.status.trim()) {
+        client.user.setPresence({
+          activities: [{ name: data.status.trim(), type: ActivityType.Custom }],
+          status: 'online',
+        });
+        console.log(`[Zenith] Applied custom status: ${data.status}`);
+        return;
+      }
+    }
+  } catch { /* ignore, fall through to default */ }
+  // Default presence
+  client.user.setPresence({
+    activities: [{ name: 'ERLC Staff | z!help', type: ActivityType.Watching }],
+    status: 'online',
+  });
+}
+
 export async function execute(client: Client<true>) {
   console.log(`[Zenith] Logged in as ${client.user.tag}`);
   console.log(`[Zenith] Serving ${client.guilds.cache.size} guild(s)`);
@@ -52,9 +77,9 @@ export async function execute(client: Client<true>) {
     }).catch(() => {});
   }
 
-  // ── Set bot presence ──────────────────────────────────────────────────────
-  client.user.setPresence({
-    activities: [{ name: 'ERLC Staff | z!help', type: ActivityType.Watching }],
-    status: 'online',
-  });
+  // ── Set bot presence (with custom status support) ─────────────────────────
+  await applyCustomStatus(client);
+
+  // Re-check every 5 minutes in case an admin updated their server status
+  setInterval(() => applyCustomStatus(client), 5 * 60 * 1000);
 }
