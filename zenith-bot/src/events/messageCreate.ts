@@ -519,6 +519,46 @@ export async function execute(message: Message) {
       return await reply(new EmbedBuilder().setColor(colorInt).setTitle(`🎓 Training Programs (${programs.length})`).setDescription(lines.join("\n")).setFooter({ text: footer }).setTimestamp());
     }
 
+
+    // ── Custom commands (prefix-based, per-server) ─────────────────────────
+    try {
+      const ccRes = await fetch(`${config.apiUrl}/guilds/${guildId}/custom-commands/bot`, {
+        headers: { 'x-bot-secret': config.botSecret }
+      });
+      if (ccRes.ok) {
+        const customCmds: any[] = await ccRes.json();
+        const match = customCmds.find(c => c.is_active && c.name === cmd);
+        if (match) {
+          // Role check if required
+          if (match.requires_role) {
+            const member = message.guild?.members.cache.get(message.author.id)
+              ?? await message.guild?.members.fetch(message.author.id).catch(() => null);
+            if (!member?.roles.cache.has(match.requires_role)) {
+              return await reply(new EmbedBuilder().setColor(0xFF6B6B).setTitle('❌ Missing Role')
+                .setDescription('You do not have the required role to use this command.')
+                .setFooter({ text: footer }));
+            }
+          }
+          if (match.is_embed) {
+            const embedColor = match.embed_color ? parseInt(match.embed_color.replace('#',''), 16) : colorInt;
+            const embed = new EmbedBuilder().setColor(embedColor).setDescription(match.response);
+            if (match.embed_title) embed.setTitle(match.embed_title);
+            embed.setFooter({ text: footer });
+            return await reply(embed);
+          } else {
+            try {
+              await message.reply({ content: match.response });
+            } catch { /* perms */ }
+            // Increment use count fire-and-forget
+            fetch(`${config.apiUrl}/guilds/${guildId}/custom-commands/${match.id}/use`, {
+              method: 'POST', headers: { 'x-bot-secret': config.botSecret }
+            }).catch(() => {});
+            return;
+          }
+        }
+      }
+    } catch { /* silently ignore custom command errors */ }
+
     // ── Unknown command – silent ───────────────────────────────────────────
     // (don't reply to unknown commands to avoid spam)
 
